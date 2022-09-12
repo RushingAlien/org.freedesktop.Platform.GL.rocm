@@ -1,0 +1,62 @@
+id: org.freedesktop.Platform.GL.rocm
+branch: stable
+runtime: org.freedesktop.Platform
+runtime-version: "21.08"
+build-extension: true
+writable-sdk: true
+sdk: org.freedesktop.Sdk
+separate-locales: false
+cleanup: [ ]
+
+modules:
+
+  - name: z3
+    buildsystem: simple
+    builddir: true
+    build-options: 
+      prefix: /usr/lib/GL/rocm/z3
+    build-commands:
+      - python scripts/mk_make.py --prefix=/usr/lib/GL/rocm/z3
+      - cd build && make && make install
+    sources:
+      - type: archive
+        url: https://github.com/Z3Prover/z3/archive/z3-4.11.2.tar.gz
+        sha512: be2573d38c0e50b46fcb025d50335e016769fdeab3c26f5dc2a13102fae889d23039258ea8d38de3f53daa4cf073704d8639ac291e781a74633194adedaae21a
+
+  - name: rocm-cmake
+    buildsystem: cmake
+    build-options:
+      cflags: -O2 -g -I/usr/lib/GL/rocm/include
+      cxxflags: -O2 -g
+      prefix: /usr/lib/GL/rocm
+    sources:
+      - type: archive
+        url: https://github.com/RadeonOpenCompute/rocm-cmake/archive/rocm-5.2.3.tar.gz
+        sha256: c63b707ec07d24fda5a2a6fffeda4df4cc04ceea5df3b8822cbe4e6600e358b4
+        dest-filename: cmake-rocm-5.2.3.tar.gz
+
+  - name: rocm-llvm
+    build-options:
+      cflags: -O2 -g -I/usr/lib/GL/rocm/llvm/include
+      cxxflags: -O2 -g
+      prefix: /usr/lib/GL/rocm/llvm
+    buildsystem: cmake-ninja
+    subdir: llvm
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DLLVM_BUILD_UTILS=ON
+      - -DLLVM_ENABLE_BINDINGS=OFF
+      - -DOCAMLFIND=NO
+      - -DLLVM_ENABLE_OCAMLDOC=OFF
+      - -DLLVM_INCLUDE_BENCHMARKS=OFF
+      - -DLLVM_BUILD_TESTS=OFF
+      - -DLLVM_ENABLE_PROJECTS='llvm;clang;lld;compiler-rt'
+      - -DLLVM_TARGETS_TO_BUILD='AMDGPU;X86'
+      - -DLLVM_BINUTILS_INCDIR=/usr/include
+    sources:
+      - type: archive
+        url: https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-5.2.3.tar.gz
+        sha256: 1b852711aec3137b568fb65f93606d37fdcd62e06f5da3766f2ffcd4e0c646df
+        dest-filename: llvm-rocm-5.2.3.tar.gz
+        
