@@ -53,7 +53,6 @@ modules:
       - -DLLVM_BUILD_TESTS=OFF
       - -DLLVM_ENABLE_PROJECTS='llvm;clang;lld;compiler-rt'
       - -DLLVM_TARGETS_TO_BUILD='AMDGPU;X86'
-      - -DLLVM_BINUTILS_INCDIR=/usr/include
     sources:
       - type: archive
         url: https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-5.2.3.tar.gz
