@@ -1,0 +1,113 @@
+id: org.freedesktop.Platform.GL.rocm
+branch: "22.08"
+runtime: org.freedesktop.Platform
+runtime-version: "22.08"
+build-extension: true
+writable-sdk: true
+sdk: org.freedesktop.Sdk
+separate-locales: false
+build-options:
+  cflags: -O2 -g -I/usr/lib/x86_64-linux-gnu/GL/rocm/include
+  cxxflags: -O2 -g
+  prefix: /usr/lib/GL/rocm
+cleanup: [ ]
+
+modules:
+
+  # - name: z3
+  #   buildsystem: simple
+  #   builddir: true
+  #   build-options: 
+  #     prefix: /usr/lib/x86_64-linux-gnu/GL/rocm/z3
+  #   build-commands:
+  #     - python scripts/mk_make.py --prefix=/usr/lib/x86_64-linux-gnu/GL/rocm/z3
+  #     - cd build && make && make install
+  #   sources:
+  #     - type: archive
+  #       url: https://github.com/Z3Prover/z3/archive/z3-4.11.2.tar.gz
+  #       sha512: be2573d38c0e50b46fcb025d50335e016769fdeab3c26f5dc2a13102fae889d23039258ea8d38de3f53daa4cf073704d8639ac291e781a74633194adedaae21a
+
+  - name: rocm-cmake
+    buildsystem: cmake
+    sources:
+      - type: archive
+        url: https://github.com/RadeonOpenCompute/rocm-cmake/archive/rocm-5.4.2.tar.gz
+        sha256: f2b325b3f0854234c670977e8ecd07f97eb7c0a647d5316649b8856bbc1d1122
+        dest-filename: cmake-rocm-5.4.2.tar.gz
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+
+  - name: rocm-llvm
+    build-options:
+      cflags: -O2 -g -I/usr/lib/GL/rocm/llvm/include
+      cxxflags: -O2 -g
+      prefix: /usr/lib/GL/rocm/llvm
+    # buildsystem: cmake-ninja
+    # subdir: llvm
+    # builddir: true
+    # config-opts:
+    # - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    # - -DCMAKE_INSTALL_PREFIX=/usr/lib/x86_64-linux-gnu/GL/rocm/llvm 
+    # - -DLLVM_ENABLE_ASSERTIONS=1 
+    # - -DBUILD_SHARED_LIBS=0
+    # - -DLLVM_BUILD_LLVM_DYLIB=1
+    # - -DLLVM_LINK_LLVM_DYLIB=1
+    # - -DLLVM_TARGETS_TO_BUILD='AMDGPU;X86'
+    # - -DLLVM_ENABLE_PROJECTS='compiler-rt;lld;clang' 
+    # - -DLLVM_ENABLE_LIBCXX=OFF
+    # - -DLLVM_ENABLE_ZLIB=ON
+    # - -DLLVM_ENABLE_FFI=ON
+    # - -DLLVM_ENABLE_RTTI=ON
+    # - -DLLVM_INCLUDE_TESTS=OFF
+    # - -DLLVM_INCLUDE_EXAMPLES=0
+    # - -DLLVM_INCLUDE_UTILS=1
+    # - -DLLVM_INSTALL_UTILS=1
+    # - -DLLVM_INCLUDE_DOCS=0
+    # - -DLLVM_ENABLE_DOXYGEN=0
+    # - -DLLVM_BUILD_EXTERNAL_COMPILER_RT=1
+    # - -DLLVM_INSTALL_TOOLCHAIN_ONLY=0
+    # - -DCMAKE_C_FLAGS_RELWITHDEBINFO="-DNDEBUG"
+    # - -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-DNDEBUG"
+    # - -DLLVM_LIBDIR_SUFFIX="/usr/lib/x86_64-linux-gnu"
+    # - -DLLVM_BINUTILS_INCDIR=/usr/include
+    buildsystem: simple
+    useless: yes
+    build-commands:
+      - cmake 
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo
+        -DCMAKE_INSTALL_PREFIX=/usr/lib/GL/rocm/llvm 
+        -DLLVM_ENABLE_ASSERTIONS=ON
+        -DBUILD_SHARED_LIBS=OFF
+        -DLLVM_BUILD_LLVM_DYLIB=OFF
+        -DLLVM_LINK_LLVM_DYLIB=OFF
+        -DLLVM_ENABLE_BINDINGS=OFF
+        -DLLVM_TARGETS_TO_BUILD='AMDGPU;X86'
+        -DLLVM_ENABLE_PROJECTS='compiler-rt;lld;clang' 
+        -DLLVM_ENABLE_LIBCXX=OFF
+        -DLLVM_INCLUDE_TESTS=OFF
+        -DLLVM_INCLUDE_EXAMPLES=OFF
+        -DLLVM_INCLUDE_UTILS=ON
+        -DLLVM_INSTALL_UTILS=ON
+        -DLLVM_INCLUDE_DOCS=OFF
+        -DLLVM_ENABLE_DOXYGEN=OFF
+        -DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON
+        -DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF
+        -DLLVM_INCLUDE_BENCHMARKS=OFF
+        -DCMAKE_C_FLAGS_RELWITHDEBINFO="-DNDEBUG"
+        -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-DNDEBUG"
+        -DLLVM_BINUTILS_INCDIR=/usr/include
+        -DOCAMLFIND=NO
+        -DLLVM_ENABLE_OCAMLDOC=OFF
+        -DLLVM_ENABLE_BINDINGS=OFF
+        -G Ninja 
+        -Hllvm
+        -Bbuild
+        llvm
+      - cd build && cmake --build . --target install
+    sources:
+      - type: archive
+        url: https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-5.4.2.tar.gz
+        sha256: 9f0d0429c342715de2f9215c6998440945cb510a566ba3ebda7d14b34f2daccc
+        dest-filename: llvm-rocm-5.4.2.tar.gz
+  - name:
+    buildsystem
