@@ -109,5 +109,3 @@ modules:
         url: https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-5.4.2.tar.gz
         sha256: 9f0d0429c342715de2f9215c6998440945cb510a566ba3ebda7d14b34f2daccc
         dest-filename: llvm-rocm-5.4.2.tar.gz
-  - name:
-    buildsystem
